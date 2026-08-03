@@ -42,7 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     loadNotificationStatus();
-
     getCurrentPosture();
     getPostureLogs();
 
