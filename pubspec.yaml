@@ -41,12 +41,18 @@ dependencies:
   flutter_local_notifications: ^17.2.2
   audioplayers: ^6.0.0
 
+  # background monitoring
+  flutter_background_service: ^5.1.0
+  flutter_background_service_android: ^6.2.3
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_launcher_icons: ^0.14.4  
+  flutter_launcher_icons: ^0.14.4
   flutter_lints: ^5.0.0
+
 
 flutter:
   uses-material-design: true
@@ -55,10 +61,11 @@ flutter:
     - assets/audio/warning.mp3
     - assets/logo/logooo.png
 
+
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/logo/logooo.png" 
+  image_path: "assets/logo/logooo.png"
 
   adaptive_icon_background: "#5B6CFF"
   adaptive_icon_foreground: "assets/logo/logooo.png"

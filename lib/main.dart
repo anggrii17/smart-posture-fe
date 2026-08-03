@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:skripsi_anggi/screens/navigation_screen.dart';
+import 'services/background_service.dart';
 
 import 'services/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeBackgroundService();
 
   await initializeDateFormatting('id_ID', null);
 
