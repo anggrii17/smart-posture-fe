@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "47680103422",
+    "project_id": "smartposture-fd189",
+    "storage_bucket": "smartposture-fd189.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:47680103422:android:aa804726585655973356af",
+        "android_client_info": {
+          "package_name": "com.example.skripsi_anggi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlDP2hiknWoUsclOKHPtOducApw9ytCPs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

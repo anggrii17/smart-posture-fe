@@ -130,5 +130,33 @@ class ApiService {
 
   }
 
+//========================
+// SAVE FCM TOKEN
+//========================
+
+static Future<bool> saveToken(String token) async {
+
+  final response = await http.post(
+
+    Uri.parse(
+      "${ApiConfig.baseUrl}/save_token.php",
+    ),
+
+    body: {
+      "token": token,
+    },
+
+  );
+
+  if (response.statusCode == 200) {
+
+    final data = jsonDecode(response.body);
+
+    return data["success"] == true;
+
+  }
+
+  return false;
+}
 
 }
