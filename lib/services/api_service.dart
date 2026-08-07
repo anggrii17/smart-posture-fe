@@ -8,38 +8,60 @@ import 'api_config.dart';
 class ApiService {
 
 
-  //========================
-  // CURRENT POSTURE
-  //========================
+  //==================================================
+  // GET CURRENT POSTURE (REALTIME)
+  //==================================================
 
   static Future<Map<String, dynamic>> getCurrentPosture() async {
 
+
     final response = await http.get(
+
       Uri.parse(
-        "${ApiConfig.baseUrl}/get_current.php",
+        "${ApiConfig.baseUrl}/current",
       ),
+
     );
 
 
-    if (response.statusCode == 200) {
 
-      return jsonDecode(response.body);
+    if(response.statusCode == 200){
+
+
+      final json = jsonDecode(
+        response.body,
+      );
+
+
+      if(json["success"] == true){
+
+        return json["data"];
+
+      }
+
+
+      throw Exception(
+        "Data current tidak ditemukan",
+      );
+
 
     }
 
 
     throw Exception(
-      "Gagal mengambil data",
+      "Gagal mengambil current posture",
     );
+
 
   }
 
 
 
 
-  //========================
-  // LOG POSTURE
-  //========================
+
+  //==================================================
+  // GET POSTURE LOGS
+  //==================================================
 
   static Future<List<Posture>> getLogs() async {
 
@@ -47,26 +69,44 @@ class ApiService {
     final response = await http.get(
 
       Uri.parse(
-        "${ApiConfig.baseUrl}/get_logs.php",
+        "${ApiConfig.baseUrl}/logs",
       ),
 
     );
 
 
 
-    if (response.statusCode == 200) {
+    if(response.statusCode == 200){
 
 
-      final List data =
-          jsonDecode(response.body);
+      final json = jsonDecode(
+        response.body,
+      );
 
 
 
-      return data
-          .map(
-            (e) => Posture.fromJson(e),
-          )
-          .toList();
+      if(json["success"] == true){
+
+
+        final List data =
+            json["data"];
+
+
+
+        return data
+            .map(
+              (e) => Posture.fromJson(e),
+            )
+            .toList();
+
+
+      }
+
+
+
+      throw Exception(
+        "Log tidak ditemukan",
+      );
 
 
     }
@@ -74,7 +114,7 @@ class ApiService {
 
 
     throw Exception(
-      "Gagal mengambil log",
+      "Gagal mengambil log posture",
     );
 
 
@@ -84,32 +124,120 @@ class ApiService {
 
 
 
-  //========================
-  // DELETE LOG POSTURE
-  //========================
+  //==================================================
+  // SAVE FCM TOKEN
+  //==================================================
 
-  static Future<bool> deleteLog(String id) async {
+  static Future<bool> saveToken(
+      String token
+  ) async {
 
+
+    try{
+
+
+      final response = await http.post(
+
+
+        Uri.parse(
+          "${ApiConfig.baseUrl}/save_token",
+        ),
+
+
+
+        headers: {
+
+
+          "Content-Type":
+              "application/json",
+
+
+        },
+
+
+
+        body: jsonEncode({
+
+
+          "token": token,
+
+
+        }),
+
+
+      );
+
+
+
+
+      if(response.statusCode == 200){
+
+
+        final data =
+            jsonDecode(response.body);
+
+
+
+        return data["success"] == true;
+
+
+      }
+
+
+
+      return false;
+
+
+
+    }catch(e){
+
+
+      print(
+        "SAVE TOKEN ERROR : $e",
+      );
+
+
+
+      return false;
+
+
+    }
+
+
+  }
+
+//==================================================
+// DELETE LOG
+//==================================================
+
+static Future<bool> deleteLog(String id) async {
+
+  try {
 
     final response = await http.post(
 
       Uri.parse(
-        "${ApiConfig.baseUrl}/delete_log.php",
+        "${ApiConfig.baseUrl}/delete_log",
       ),
 
+      headers: {
 
-      body: {
+        "Content-Type":
+            "application/json",
+
+      },
+
+      body: jsonEncode({
 
         "id": id,
 
-      },
+      }),
 
     );
 
 
 
-
-    if (response.statusCode == 200) {
+    if(response.statusCode == 200){
 
 
       final data =
@@ -123,6 +251,16 @@ class ApiService {
     }
 
 
+    return false;
+
+
+
+  }catch(e){
+
+
+    print(
+      "DELETE LOG ERROR : $e",
+    );
 
 
     return false;
@@ -130,33 +268,45 @@ class ApiService {
 
   }
 
-//========================
-// SAVE FCM TOKEN
-//========================
+}
+//==================================================
+// GET STATUS ESP32
+//==================================================
 
-static Future<bool> saveToken(String token) async {
+static Future<bool> getESPStatus() async {
 
-  final response = await http.post(
+  try {
 
-    Uri.parse(
-      "${ApiConfig.baseUrl}/save_token.php",
-    ),
+    final response = await http.get(
 
-    body: {
-      "token": token,
-    },
+      Uri.parse(
+        "${ApiConfig.baseUrl}/esp_status",
+      ),
 
-  );
+    );
 
-  if (response.statusCode == 200) {
+    if (response.statusCode == 200) {
 
-    final data = jsonDecode(response.body);
+      final json = jsonDecode(response.body);
 
-    return data["success"] == true;
+      if (json["success"] == true) {
+
+        return json["online"];
+
+      }
+
+    }
+
+    return false;
+
+  } catch (e) {
+
+    print("ESP STATUS ERROR : $e");
+
+    return false;
 
   }
 
-  return false;
 }
 
 }

@@ -1,30 +1,57 @@
 class Posture {
 
+
   final int id;
   final double pitch;
   final String status;
   final String timestamp;
 
+
+
   Posture({
+
     required this.id,
     required this.pitch,
     required this.status,
     required this.timestamp,
+
   });
 
-  factory Posture.fromJson(Map<String, dynamic> json) {
+
+
+  factory Posture.fromJson(
+      Map<String,dynamic> json
+  ){
 
     return Posture(
 
-      id: int.parse(json["id"].toString()),
+      id:
+      int.tryParse(
+        json["id"].toString()
+      ) ?? 0,
 
-      pitch: double.parse(json["pitch"].toString()),
 
-      status: json["status"],
+      pitch:
+      double.tryParse(
+        json["pitch"].toString()
+      ) ?? 0,
 
-      timestamp: json["timestamp"],
+
+      status:
+      json["status"]?.toString()
+      ?? "-",
+
+
+
+      timestamp:
+      json["timestamp"]?.toString()
+      ?? "",
+
 
     );
+
+
   }
+
 
 }

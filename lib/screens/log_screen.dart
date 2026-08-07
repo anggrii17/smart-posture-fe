@@ -6,23 +6,35 @@ import '../services/api_service.dart';
 
 
 class LogScreen extends StatefulWidget {
-  const LogScreen({super.key});
+
+  const LogScreen({
+    super.key,
+  });
+
 
   @override
-  State<LogScreen> createState() => _LogScreenState();
+  State<LogScreen> createState() =>
+      _LogScreenState();
+
 }
+
 
 
 class _LogScreenState extends State<LogScreen> {
 
+
   late Future<List<Posture>> futureLogs;
+
 
 
   @override
   void initState() {
+
     super.initState();
 
-    futureLogs = ApiService.getLogs();
+    futureLogs =
+        ApiService.getLogs();
+
   }
 
 
@@ -31,7 +43,8 @@ class _LogScreenState extends State<LogScreen> {
 
     setState(() {
 
-      futureLogs = ApiService.getLogs();
+      futureLogs =
+          ApiService.getLogs();
 
     });
 
@@ -39,25 +52,122 @@ class _LogScreenState extends State<LogScreen> {
 
 
 
-  @override
+  //====================================
+  // FORMAT TIMESTAMP DARI FLASK
+  //====================================
+
+  String formatTanggal(String timestamp){
+
+    try {
+
+      DateTime date;
+
+
+      if(timestamp.contains("GMT")){
+
+
+        final clean =
+            timestamp
+            .replaceAll("GMT", "")
+            .trim();
+
+
+        final parts =
+            clean.split(" ");
+
+
+        final day =
+            parts[1];
+
+        final month =
+            parts[2];
+
+        final year =
+            parts[3];
+
+        final time =
+            parts[4];
+
+
+        final months = {
+
+          "Jan":"01",
+          "Feb":"02",
+          "Mar":"03",
+          "Apr":"04",
+          "May":"05",
+          "Jun":"06",
+          "Jul":"07",
+          "Aug":"08",
+          "Sep":"09",
+          "Oct":"10",
+          "Nov":"11",
+          "Dec":"12",
+
+        };
+
+
+        date = DateTime.parse(
+
+          "$year-${months[month]}-$day $time"
+
+        );
+
+
+      }else{
+
+
+        date =
+            DateTime.parse(timestamp);
+
+
+      }
+
+
+
+      return DateFormat(
+
+        "dd MMM yyyy • HH:mm",
+
+        "id_ID",
+
+      ).format(date);
+
+
+
+    }catch(e){
+
+
+      return "-";
+
+
+    }
+
+  }
+    @override
   Widget build(BuildContext context) {
+
 
     return Scaffold(
 
+
       body: Stack(
+
 
         children: [
 
 
-          // HEADER
 
           Container(
 
             height: 200,
 
-            decoration: const BoxDecoration(
 
-              gradient: LinearGradient(
+            decoration:
+            const BoxDecoration(
+
+              gradient:
+              LinearGradient(
 
                 colors: [
 
@@ -67,9 +177,14 @@ class _LogScreenState extends State<LogScreen> {
 
                 ],
 
-                begin: Alignment.topLeft,
 
-                end: Alignment.bottomRight,
+                begin:
+                Alignment.topLeft,
+
+
+                end:
+                Alignment.bottomRight,
+
 
               ),
 
@@ -79,9 +194,13 @@ class _LogScreenState extends State<LogScreen> {
 
 
 
+
+
+
           SafeArea(
 
             child: Column(
+
 
               children: [
 
@@ -89,92 +208,146 @@ class _LogScreenState extends State<LogScreen> {
 
                 const Padding(
 
-                  padding: EdgeInsets.only(
 
-                    left: 25,
+                  padding:
+                  EdgeInsets.only(
 
-                    top: 20,
+                    left:25,
 
-                    bottom: 20,
+                    top:20,
+
+                    bottom:20,
 
                   ),
 
+
+
                   child: Align(
 
-                    alignment: Alignment.centerLeft,
+                    alignment:
+                    Alignment.centerLeft,
+
 
                     child: Text(
 
+
                       "Riwayat Postur",
 
-                      style: TextStyle(
 
-                        color: Colors.white,
+                      style:
+                      TextStyle(
 
-                        fontSize: 30,
+                        color:
+                        Colors.white,
 
-                        fontWeight: FontWeight.bold,
+
+                        fontSize:30,
+
+
+                        fontWeight:
+                        FontWeight.bold,
+
 
                       ),
+
 
                     ),
 
                   ),
+
 
                 ),
 
 
 
+
+
+
                 Expanded(
+
 
                   child: Container(
 
-                    width: double.infinity,
+
+                    width:
+                    double.infinity,
 
 
-                    decoration: const BoxDecoration(
 
-                      color: Color(0xffF4F7FC),
+                    decoration:
+                    const BoxDecoration(
 
 
-                      borderRadius: BorderRadius.only(
+                      color:
+                      Color(0xffF4F7FC),
 
-                        topLeft: Radius.circular(35),
 
-                        topRight: Radius.circular(35),
+
+                      borderRadius:
+                      BorderRadius.only(
+
+
+                        topLeft:
+                        Radius.circular(35),
+
+
+                        topRight:
+                        Radius.circular(35),
+
 
                       ),
+
 
                     ),
 
 
-                    child: FutureBuilder<List<Posture>>(
-
-                      future: futureLogs,
 
 
-                      builder: (context, snapshot) {
 
 
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
+                    child:
+                    FutureBuilder<List<Posture>>(
+
+
+                      future:
+                      futureLogs,
+
+
+
+                      builder:
+                      (context,snapshot){
+
+
+
+                        if(snapshot.connectionState ==
+                            ConnectionState.waiting){
+
 
 
                           return const Center(
 
-                            child: CircularProgressIndicator(),
+
+                            child:
+                            CircularProgressIndicator(),
+
 
                           );
 
                         }
 
 
-                        if (snapshot.hasError) {
+
+
+
+
+                        if(snapshot.hasError){
 
 
                           return Center(
 
-                            child: Text(
+
+                            child:
+                            Text(
 
                               snapshot.error.toString(),
 
@@ -185,19 +358,27 @@ class _LogScreenState extends State<LogScreen> {
                         }
 
 
-                        final logs = snapshot.data ?? [];
-
-
-                        final latestLogs = logs;
 
 
 
-                        if (latestLogs.isEmpty) {
+
+
+                        final logs =
+                            snapshot.data ?? [];
+
+
+
+
+
+
+                        if(logs.isEmpty){
 
 
                           return const Center(
 
-                            child: Text(
+
+                            child:
+                            Text(
 
                               "Belum ada data",
 
@@ -205,437 +386,468 @@ class _LogScreenState extends State<LogScreen> {
 
                           );
 
+
                         }
-                                                return RefreshIndicator(
-
-                          onRefresh: refreshData,
 
 
-                          child: ListView(
 
-                            padding: const EdgeInsets.all(20),
+
+
+
+                        return RefreshIndicator(
+
+
+                          onRefresh:
+                          refreshData,
+
+
+
+                          child:
+                          ListView(
+
+
+
+                            padding:
+                            const EdgeInsets.all(20),
+
 
 
                             children: [
 
 
+
+
+
                               Row(
+
 
                                 children: const [
 
+
+
                                   Icon(
+
                                     Icons.history,
-                                    color: Color(0xff304FFE),
+
+                                    color:
+                                    Color(0xff304FFE),
+
                                   ),
 
 
-                                  SizedBox(width: 10),
+
+
+                                  SizedBox(
+
+                                    width:10,
+
+                                  ),
+
+
+
 
 
                                   Text(
 
+
                                     "Semua Riwayat",
 
-                                    style: TextStyle(
 
-                                      fontSize: 20,
 
-                                      fontWeight: FontWeight.bold,
+                                    style:
+                                    TextStyle(
+
+
+                                      fontSize:20,
+
+
+                                      fontWeight:
+                                      FontWeight.bold,
+
 
                                     ),
 
+
                                   ),
 
+
+
                                 ],
+
 
                               ),
 
 
 
-                              const SizedBox(height: 20),
+
+
+                              const SizedBox(
+
+                                height:20,
+
+                              ),
 
 
 
-                              ...latestLogs.map((log) {
+
+
+
+                              ...logs.map((log){
+
 
 
                                 final bool good =
-                                    log.status == "Ergonomis";
+                                    log.status ==
+                                    "Ergonomis";
 
-
-
-                                final date =
-                                    DateTime.parse(log.timestamp);
 
 
 
                                 final formattedDate =
-                                    DateFormat(
-
-                                  "dd MMM yyyy • HH:mm",
-
-                                  "id_ID",
-
-                                ).format(date);
-
-
-
-
-                                return Dismissible(
-
-
-                                  key: Key(
-                                    log.id.toString(),
-                                  ),
-
-
-
-                                  direction:
-                                      DismissDirection.endToStart,
-
-
-
-                                  background: Container(
-
-                                    margin:
-                                        const EdgeInsets.only(
-                                      bottom: 15,
-                                    ),
-
-
-                                    alignment:
-                                        Alignment.centerRight,
-
-
-                                    padding:
-                                        const EdgeInsets.only(
-                                      right: 25,
-                                    ),
-
-
-
-                                    decoration:
-                                        BoxDecoration(
-
-                                      color: Colors.red,
-
-                                      borderRadius:
-                                          BorderRadius.circular(22),
-
-                                    ),
-
-
-
-                                    child: const Icon(
-
-                                      Icons.delete,
-
-                                      color: Colors.white,
-
-                                      size: 30,
-
-                                    ),
-
-                                  ),
-
-
-
-
-                                  onDismissed: (direction) async {
-
-
-                                    bool success =
-                                        await ApiService.deleteLog(
-                                      log.id.toString(),
+                                    formatTanggal(
+                                      log.timestamp,
                                     );
 
 
 
-                                    if(success){
 
+                                return Container(
 
-                                      refreshData();
 
+                                  margin:
+                                  const EdgeInsets.only(
 
+                                    bottom:15,
 
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
+                                  ),
 
-                                        const SnackBar(
 
-                                          content: Text(
-                                            "Riwayat berhasil dihapus",
-                                          ),
 
-                                        ),
 
-                                      );
+                                  padding:
+                                  const EdgeInsets.all(18),
 
 
-                                    } else {
 
+                                  decoration:
+                                  BoxDecoration(
 
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
 
-                                        const SnackBar(
+                                    color:
+                                    Colors.white,
 
-                                          content: Text(
-                                            "Gagal menghapus riwayat",
-                                          ),
 
-                                        ),
 
-                                      );
+                                    borderRadius:
+                                    BorderRadius.circular(22),
 
 
-                                    }
 
+                                    boxShadow: [
 
-                                  },
-                                                                    child: Container(
 
+                                      BoxShadow(
 
-                                    margin: const EdgeInsets.only(
-                                      bottom: 15,
-                                    ),
+                                        color:
+                                        Colors.black.withOpacity(.05),
 
 
-                                    padding: const EdgeInsets.all(18),
+                                        blurRadius:12,
 
 
+                                        offset:
+                                        const Offset(0,8),
 
-                                    decoration: BoxDecoration(
+                                      ),
 
-                                      color: Colors.white,
 
+                                    ],
 
-                                      borderRadius:
-                                          BorderRadius.circular(22),
 
+                                  ),
+                                                                    child:
+                                  Row(
 
-                                      boxShadow: [
 
-                                        BoxShadow(
+                                    children: [
 
-                                          color: Colors.black
-                                              .withOpacity(.05),
 
-                                          blurRadius: 12,
 
-                                          offset:
-                                              const Offset(0, 8),
+                                      CircleAvatar(
 
-                                        ),
 
-                                      ],
+                                        radius:24,
 
-                                    ),
 
 
+                                        backgroundColor:
 
-                                    child: Row(
 
-                                      children: [
+                                        good
 
+                                        ? Colors.green.shade100
 
+                                        : Colors.red.shade100,
 
-                                        CircleAvatar(
 
-                                          radius: 24,
 
+                                        child:
+                                        Icon(
 
-                                          backgroundColor: good
 
-                                              ? Colors.green.shade100
+                                          good
 
-                                              : Colors.red.shade100,
+                                          ? Icons.check_circle
 
+                                          : Icons.warning_amber_rounded,
 
 
-                                          child: Icon(
 
-                                            good
+                                          color:
 
-                                                ? Icons.check_circle
 
-                                                : Icons.warning_amber_rounded,
+                                          good
 
+                                          ? Colors.green
 
+                                          : Colors.red,
 
-                                            color: good
-
-                                                ? Colors.green
-
-                                                : Colors.red,
-
-                                          ),
 
                                         ),
 
 
-
-
-                                        const SizedBox(width: 15),
-
+                                      ),
 
 
 
 
-                                        Expanded(
-
-                                          child: Column(
-
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
 
 
+                                      const SizedBox(
 
-                                            children: [
+                                        width:15,
+
+                                      ),
 
 
 
-                                              Row(
-
-                                                children: [
 
 
 
-                                                  Expanded(
-
-                                                    child: Text(
-
-                                                      "${log.pitch.toStringAsFixed(1)}°",
+                                      Expanded(
 
 
+                                        child:
+                                        Column(
 
-                                                      style:
-                                                          const TextStyle(
 
-                                                        fontSize: 24,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
 
-                                                        fontWeight:
-                                                            FontWeight.bold,
 
-                                                      ),
+
+                                          children: [
+
+
+
+
+
+                                            Row(
+
+
+                                              children: [
+
+
+
+
+
+                                                Expanded(
+
+
+                                                  child:
+                                                  Text(
+
+
+                                                    "${log.pitch.toStringAsFixed(1)}°",
+
+
+
+                                                    style:
+                                                    const TextStyle(
+
+
+                                                      fontSize:24,
+
+
+                                                      fontWeight:
+                                                      FontWeight.bold,
+
 
                                                     ),
+
+
 
                                                   ),
 
-
-
-
-
-                                                  Container(
-
-                                                    padding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-
-                                                      horizontal: 12,
-
-                                                      vertical: 6,
-
-                                                    ),
-
-
-
-                                                    decoration:
-                                                        BoxDecoration(
-
-                                                      color: good
-
-                                                          ? Colors.green.shade50
-
-                                                          : Colors.red.shade50,
-
-
-
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-
-                                                    ),
-
-
-
-
-                                                    child: Text(
-
-                                                      log.status,
-
-
-
-                                                      style: TextStyle(
-
-                                                        color: good
-
-                                                            ? Colors.green
-
-                                                            : Colors.red,
-
-
-
-                                                        fontWeight:
-                                                            FontWeight.bold,
-
-                                                      ),
-
-                                                    ),
-
-                                                  ),
-
-
-
-                                                ],
-
-                                              ),
-
-
-
-
-
-                                              const SizedBox(height: 8),
-
-
-
-
-
-                                              Text(
-
-                                                formattedDate,
-
-
-
-                                                style: const TextStyle(
-
-                                                  color: Colors.grey,
-
-                                                  fontSize: 13,
 
                                                 ),
 
+
+
+
+
+
+                                                Container(
+
+
+                                                  padding:
+                                                  const EdgeInsets.symmetric(
+
+                                                    horizontal:12,
+
+                                                    vertical:6,
+
+                                                  ),
+
+
+
+                                                  decoration:
+                                                  BoxDecoration(
+
+
+
+                                                    color:
+
+                                                    good
+
+                                                    ? Colors.green.shade50
+
+                                                    : Colors.red.shade50,
+
+
+
+                                                    borderRadius:
+                                                    BorderRadius.circular(20),
+
+
+
+                                                  ),
+
+
+
+
+
+
+                                                  child:
+                                                  Text(
+
+
+
+                                                    log.status,
+
+
+
+                                                    style:
+                                                    TextStyle(
+
+
+
+                                                      color:
+
+                                                      good
+
+                                                      ? Colors.green
+
+                                                      : Colors.red,
+
+
+
+                                                      fontWeight:
+                                                      FontWeight.bold,
+
+
+                                                    ),
+
+
+                                                  ),
+
+
+
+                                                ),
+
+
+
+
+                                              ],
+
+
+                                            ),
+
+
+
+
+
+
+                                            const SizedBox(
+
+                                              height:8,
+
+                                            ),
+
+
+
+
+
+
+                                            Text(
+
+
+                                              formattedDate,
+
+
+
+                                              style:
+                                              const TextStyle(
+
+
+
+                                                color:
+                                                Colors.grey,
+
+
+
+                                                fontSize:13,
+
+
+
                                               ),
 
 
 
-                                            ],
+                                            ),
 
-                                          ),
+
+
+
+                                          ],
+
 
                                         ),
 
 
+                                      ),
 
-                                      ],
 
-                                    ),
+
+                                    ],
 
 
                                   ),
 
+
+
                                 );
+
 
 
                               }).toList(),
@@ -643,15 +855,24 @@ class _LogScreenState extends State<LogScreen> {
 
 
 
-                              const SizedBox(height: 100),
+
+                              const SizedBox(
+
+                                height:100,
+
+                              ),
+
 
 
                             ],
 
 
+
                           ),
 
+
                         );
+
 
 
                       },
@@ -666,6 +887,7 @@ class _LogScreenState extends State<LogScreen> {
                 ),
 
 
+
               ],
 
 
@@ -675,10 +897,12 @@ class _LogScreenState extends State<LogScreen> {
           ),
 
 
+
         ],
 
 
       ),
+
 
 
     );

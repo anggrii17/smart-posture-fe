@@ -53,59 +53,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
-  //========================
-  // CEK KONEKSI ESP32
-  //========================
+//========================
+// CEK KONEKSI ESP32
+//========================
 
-  Future<void> checkESPConnection() async {
+Future<void> checkESPConnection() async {
 
   try {
 
-    final data = await ApiService.getCurrentPosture();
-
-    DateTime lastUpdate =
-        DateTime.parse(
-          data['last_update'].replaceFirst(' ', 'T')
-        ).add(
-          const Duration(hours: 7),
-        );
-
-
-    DateTime now = DateTime.now();
-
-    int diff =
-        now.difference(lastUpdate).inSeconds;
-
-
-    print("SELISIH ESP: $diff detik");
-
+    final online = await ApiService.getESPStatus();
 
     if (mounted) {
-
       setState(() {
-
-        espConnected = diff <= 3;
-
+        espConnected = online;
       });
-
     }
-
 
   } catch (e) {
 
-    print("ERROR ESP: $e");
+    print("ESP STATUS ERROR : $e");
 
     if (mounted) {
-
       setState(() {
-
         espConnected = false;
-
       });
-
     }
 
   }
+
 }
 
   @override
